@@ -65,3 +65,23 @@ def time_stretch(x, stretch_range=(0.8, 1.2)):
         return np.pad(x_stretched, (0, pad_len), mode="edge")
     else:
         return x_stretched
+
+
+def permute_segments(x, n_segments=4):
+    """
+    신호를 n_segments 개의 구간으로 나누고 순서를 랜덤하게 섞음.
+    길이가 딱 나누어떨어지지 않아도 대략적으로 분할.
+    """
+    x = np.asarray(x)
+    n = len(x)
+
+    if n_segments <= 1 or n < n_segments:
+        return x.copy()
+
+    # 균등하게 segment 인덱스 구분
+    indices = np.linspace(0, n, n_segments + 1, dtype=int)
+    segments = [x[indices[i]:indices[i + 1]] for i in range(n_segments)]
+
+    perm = np.random.permutation(n_segments)
+    permuted = [segments[i] for i in perm]
+    return np.concatenate(permuted)
