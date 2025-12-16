@@ -85,3 +85,63 @@ def permute_segments(x, n_segments=4):
     perm = np.random.permutation(n_segments)
     permuted = [segments[i] for i in perm]
     return np.concatenate(permuted)
+
+
+class SignalAugmentor:
+    """
+    여러 증강 기법을 확률적으로 적용해서 새로운 신호를 만들어주는 클래스.
+    """
+
+    def __init__(
+        self,
+        p_noise=0.7,
+        p_scale=0.5,
+        p_shift=0.5,
+        p_stretch=0.5,
+        p_permute=0.3,
+        noise_snr_db_range=(10, 30),
+        scale_range=(0.8, 1.2),
+        max_shift_ratio=0.1,
+        stretch_range=(0.9, 1.1),
+        n_segments=4,
+    ):
+        self.p_noise = p_noise
+        self.p_scale = p_scale
+        self.p_shift = p_shift
+        self.p_stretch = p_stretch
+        self.p_permute = p_permute
+
+        self.noise_snr_db_range = noise_snr_db_range
+        self.scale_range = scale_range
+        self.max_shift_ratio = max_shift_ratio
+        self.stretch_range = stretch_range
+        self.n_segments = n_segments
+
+    def augment_once(self, x):
+        """
+        신호 x (1D array)를 한 번 증강해서 반환.
+        """
+        x_aug = np.asarray(x).copy()
+
+        if np.random.rand() < self.p_noise:
+            x_aug = add_noise(x_aug, self.noise_snr_db_range)
+
+        if np.random.rand() < self.p_scale:
+            x_aug = scale_amplitude(x_aug, self.scale_range)
+
+        if np.random.rand() < self.p_shift:
+            x_aug = time_shift(x_aug, self.max_shift_ratio)
+
+        if np.random.rand() < self.p_stretch:
+            x_aug = time_stretch(x_aug, self.stretch_range)
+
+        if np.random.rand() < self.p_permute:
+            x_aug = permute_segments(x_aug, self.n_segments)
+
+        return x_aug
+
+    def augment_batch(self, x, n_aug=5):
+        """
+        한 개의 원본 신호 x에 대해 n_aug개의 증강 샘플 리스트 반환.
+        """
+        return [self.augment_once(x) for _ in range(n_aug)]
