@@ -35,3 +35,33 @@ def time_shift(x, max_shift_ratio=0.1):
         return x.copy()
     shift = np.random.randint(-max_shift, max_shift + 1)
     return np.roll(x, shift)
+
+
+def time_stretch(x, stretch_range=(0.8, 1.2)):
+    """
+    신호를 시간축에서 늘이거나 줄이기.
+    출력 길이는 원래 길이와 동일하게 리샘플링.
+    stretch < 1: 압축 (빨라짐)
+    stretch > 1: 스트레치 (느려짐)
+    """
+    x = np.asarray(x)
+    n = len(x)
+    factor = np.random.uniform(*stretch_range)
+
+    # 새로운 길이 결정
+    new_len = max(2, int(n * factor))  # 최소 2 포인트
+    t_orig = np.arange(n)
+    t_new = np.linspace(0, n - 1, new_len)
+
+    # 1D 선형 보간
+    x_stretched = np.interp(t_new, t_orig, x)
+
+    # 다시 원래 길이로 맞춰주기 (crop or pad)
+    if new_len > n:
+        return x_stretched[:n]
+    elif new_len < n:
+        pad_len = n - new_len
+        # 끝값을 반복해서 패딩
+        return np.pad(x_stretched, (0, pad_len), mode="edge")
+    else:
+        return x_stretched
