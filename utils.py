@@ -1,5 +1,15 @@
 import numpy as np
 
+ArrayLike = Union[np.ndarray, Iterable[float]]
+
+
+def _to_1d_array(x: ArrayLike) -> np.ndarray:
+    x = np.asarray(x, dtype=float)
+    if x.ndim != 1:
+        raise ValueError(f"Expected 1D array, got shape {x.shape}")
+    return x
+    
+
 def add_noise(x, snr_db_range=(10, 30)):
     """
     신호에 가우시안 노이즈를 추가.
