@@ -21,3 +21,17 @@ def scale_amplitude(x, scale_range=(0.8, 1.2)):
     x = np.asarray(x)
     scale = np.random.uniform(*scale_range)
     return x * scale
+
+
+def time_shift(x, max_shift_ratio=0.1):
+    """
+    신호를 좌우로 회전(roll) 시켜 시간 축 이동.
+    max_shift_ratio: 신호 길이에 대한 최대 이동 비율 (예: 0.1 -> 최대 10% 길이 이동)
+    """
+    x = np.asarray(x)
+    n = len(x)
+    max_shift = int(n * max_shift_ratio)
+    if max_shift < 1:
+        return x.copy()
+    shift = np.random.randint(-max_shift, max_shift + 1)
+    return np.roll(x, shift)
