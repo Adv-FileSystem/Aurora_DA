@@ -12,3 +12,12 @@ def add_noise(x, snr_db_range=(10, 30)):
     noise_power = power / snr
     noise = np.random.normal(0, np.sqrt(noise_power), size=x.shape)
     return x + noise
+
+
+def scale_amplitude(x, scale_range=(0.8, 1.2)):
+    """
+    전체 진폭을 랜덤 배율로 스케일링.
+    """
+    x = np.asarray(x)
+    scale = np.random.uniform(*scale_range)
+    return x * scale
