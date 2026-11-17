@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from psm_aug.pipeline import run, save_result  # noqa: E402
 from psm_aug.utils import load_config, set_seed  # noqa: E402
 
 
@@ -42,8 +43,9 @@ def main():
     args = parse_args()
     cfg = apply_overrides(load_config(args.config), args)
     set_seed(cfg.get("seed"))
-    print(f"loaded config: {args.config}")
-    print(cfg)
+    result = run(cfg)
+    path = save_result(result, cfg["output"]["dir"], cfg)
+    print(f"saved {len(result.windows)} windows -> {path}")
 
 
 if __name__ == "__main__":
