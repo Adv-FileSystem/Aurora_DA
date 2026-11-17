@@ -38,6 +38,22 @@ Output: `<output.dir>/psm_augmented.npz` with
 
 The config used for the run is saved next to it as `config.yaml`.
 
+## Transforms
+
+| name | description | main params |
+|---|---|---|
+| `jitter` | add Gaussian noise | `sigma` |
+| `scaling` | multiply each channel by a random factor | `sigma` |
+| `magnitude_warp` | multiply by a smooth random curve | `sigma`, `knots` |
+| `time_warp` | smoothly speed up / slow down time | `sigma`, `knots` |
+| `window_slice` | crop a sub-window and stretch it back | `ratio` |
+| `window_warp` | stretch or squeeze a short segment | `window_ratio`, `scales` |
+| `permutation` | shuffle time segments (breaks temporal order, use with care) | `max_segments` |
+| mixup | blend two normal windows (`augment.mixup`) | `alpha`, `ratio` |
+
+Each transform in `augment.transforms` is applied with probability `p`.
+`augment.anomaly_policy: skip` augments normal windows only.
+
 ## Tests
 
 ```bash
