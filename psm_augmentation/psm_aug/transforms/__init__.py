@@ -6,6 +6,7 @@ from .magnitude_warp import MagnitudeWarp
 from .time_warp import TimeWarp
 from .window_slice import WindowSlice
 from .window_warp import WindowWarp
+from .permutation import Permutation
 
 __all__ = [
     "Transform",
@@ -18,4 +19,5 @@ __all__ = [
     "TimeWarp",
     "WindowSlice",
     "WindowWarp",
+    "Permutation",
 ]
