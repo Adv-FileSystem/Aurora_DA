@@ -16,6 +16,7 @@ window:
 augment:
   copies: 2               # augmented copies per original window
   clip: true              # clip augmented values to [0, 1] when normalized
+  anomaly_policy: keep    # keep: augment all windows / skip: normal windows only
   transforms:
     - {name: jitter, p: 0.8, params: {sigma: 0.03}}
     - {name: scaling, p: 0.5, params: {sigma: 0.1}}

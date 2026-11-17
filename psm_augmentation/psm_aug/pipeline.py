@@ -41,7 +41,10 @@ def augment_windows(X, y, aug_cfg, rng, clip=False):
     """Create augmented copies of windows, plus optional mixup samples."""
     transform = build_transform(aug_cfg.get("transforms", []))
     copies = int(aug_cfg.get("copies", 1))
-    targets = np.arange(len(X))
+    policy = aug_cfg.get("anomaly_policy", "keep")
+    if policy not in ("keep", "skip"):
+        raise ValueError(f"anomaly_policy must be 'keep' or 'skip', got {policy!r}")
+    targets = np.arange(len(X)) if policy == "keep" else np.flatnonzero(y == 0)
 
     out_x, out_y = [], []
     for _ in range(copies):
