@@ -1,0 +1,30 @@
+# Default configuration for PSM data augmentation
+data:
+  root: ./data/PSM        # folder with train.csv, test.csv, test_label.csv
+  split: train            # train | test
+
+seed: 42
+
+preprocess:
+  normalize: true         # min-max scaling fitted on the train split
+
+window:
+  size: 100
+  stride: 10
+  label_rule: any         # any | last | majority (used for the test split)
+
+augment:
+  copies: 2               # augmented copies per original window
+  transforms:
+    - {name: jitter, p: 0.8, params: {sigma: 0.03}}
+    - {name: scaling, p: 0.5, params: {sigma: 0.1}}
+    - {name: magnitude_warp, p: 0.3, params: {sigma: 0.2, knots: 4}}
+    - {name: time_warp, p: 0.3, params: {sigma: 0.2, knots: 4}}
+    - {name: window_warp, p: 0.2, params: {window_ratio: 0.1, scales: [0.5, 2.0]}}
+  mixup:
+    enabled: false
+    alpha: 0.2
+    ratio: 0.2            # extra mixup samples relative to the number of normal windows
+
+output:
+  dir: ./outputs/psm_aug
