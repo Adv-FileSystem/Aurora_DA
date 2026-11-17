@@ -37,7 +37,7 @@ def prepare_windows(cfg):
     return X, y
 
 
-def augment_windows(X, y, aug_cfg, rng):
+def augment_windows(X, y, aug_cfg, rng, clip=False):
     """Create augmented copies of windows, plus optional mixup samples."""
     transform = build_transform(aug_cfg.get("transforms", []))
     copies = int(aug_cfg.get("copies", 1))
@@ -62,6 +62,8 @@ def augment_windows(X, y, aug_cfg, rng):
     if not out_x:
         return np.empty((0,) + X.shape[1:], dtype=np.float32), np.empty(0, dtype=np.int64)
     ax = np.stack(out_x).astype(np.float32)
+    if clip:
+        ax = np.clip(ax, 0.0, 1.0)
     return ax, np.asarray(out_y, dtype=np.int64)
 
 
@@ -70,7 +72,9 @@ def run(cfg) -> AugmentResult:
     rng = np.random.default_rng(cfg.get("seed"))
     X, y = prepare_windows(cfg)
     aug_cfg = cfg.get("augment", {})
-    ax, ay = augment_windows(X, y, aug_cfg, rng)
+    normalized = cfg.get("preprocess", {}).get("normalize", True)
+    clip = bool(aug_cfg.get("clip", False)) and normalized
+    ax, ay = augment_windows(X, y, aug_cfg, rng, clip=clip)
     return AugmentResult(
         windows=np.concatenate([X, ax]),
         labels=np.concatenate([y, ay]),
