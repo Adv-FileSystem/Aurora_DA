@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from psm_aug.pipeline import run, save_result  # noqa: E402
+from psm_aug.stats import format_report  # noqa: E402
 from psm_aug.utils import load_config, set_seed  # noqa: E402
 
 
@@ -46,6 +47,10 @@ def main():
     result = run(cfg)
     path = save_result(result, cfg["output"]["dir"], cfg)
     print(f"saved {len(result.windows)} windows -> {path}")
+    original = result.windows[~result.is_augmented]
+    augmented = result.windows[result.is_augmented]
+    if len(augmented):
+        print(format_report(original, augmented))
 
 
 if __name__ == "__main__":
