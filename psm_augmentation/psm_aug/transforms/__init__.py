@@ -2,6 +2,7 @@
 from .base import Transform, Compose, RandomApply, OneOf
 from .jitter import Jitter
 from .scaling import Scaling
+from .magnitude_warp import MagnitudeWarp
 
 __all__ = [
     "Transform",
@@ -10,4 +11,5 @@ __all__ = [
     "OneOf",
     "Jitter",
     "Scaling",
+    "MagnitudeWarp",
 ]
