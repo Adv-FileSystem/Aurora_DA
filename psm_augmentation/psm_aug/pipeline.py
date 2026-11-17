@@ -1,7 +1,9 @@
 """End-to-end augmentation pipeline for PSM."""
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
+import yaml
 
 from .io import load_psm
 from .preprocess import MinMaxScaler, fill_missing
@@ -74,3 +76,20 @@ def run(cfg) -> AugmentResult:
         labels=np.concatenate([y, ay]),
         is_augmented=np.concatenate([np.zeros(len(X), dtype=bool), np.ones(len(ax), dtype=bool)]),
     )
+
+
+def save_result(result: AugmentResult, out_dir, cfg=None) -> Path:
+    """Save windows/labels as ``psm_augmented.npz`` (and the config as YAML)."""
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / "psm_augmented.npz"
+    np.savez_compressed(
+        path,
+        windows=result.windows,
+        labels=result.labels,
+        is_augmented=result.is_augmented,
+    )
+    if cfg is not None:
+        with open(out / "config.yaml", "w", encoding="utf-8") as f:
+            yaml.safe_dump(cfg, f, sort_keys=False, allow_unicode=True)
+    return path
