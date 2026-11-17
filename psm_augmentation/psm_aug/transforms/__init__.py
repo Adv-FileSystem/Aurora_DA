@@ -4,6 +4,7 @@ from .jitter import Jitter
 from .scaling import Scaling
 from .magnitude_warp import MagnitudeWarp
 from .time_warp import TimeWarp
+from .window_slice import WindowSlice
 
 __all__ = [
     "Transform",
@@ -14,4 +15,5 @@ __all__ = [
     "Scaling",
     "MagnitudeWarp",
     "TimeWarp",
+    "WindowSlice",
 ]
